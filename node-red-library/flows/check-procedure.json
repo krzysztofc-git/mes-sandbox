@@ -1,0 +1,147 @@
+[
+  {
+    "id": "check-procedure",
+    "type": "tab",
+    "label": "Check procedure",
+    "disabled": false,
+    "info": "",
+    "env": []
+  },
+  {
+    "id": "2",
+    "type": "inject",
+    "z": "1",
+    "name": "simulate scan",
+    "props": [
+      {
+        "p": "payload"
+      }
+    ],
+    "repeat": "",
+    "crontab": "",
+    "once": false,
+    "onceDelay": 0.1,
+    "topic": "",
+    "payload": "{\"serial\":\"ABC123\",\"userId\":1}",
+    "payloadType": "json",
+    "x": 110,
+    "y": 80,
+    "wires": [
+      [
+        "3",
+        "4"
+      ]
+    ]
+  },
+  {
+    "id": "3",
+    "type": "function",
+    "z": "1",
+    "name": "prepare data",
+    "func": "msg.payload = `EXEC ScanSerial @SerialCode = '${msg.payload.serial}', @UserID = ${msg.payload.userId}`;\nreturn msg;",
+    "outputs": 1,
+    "timeout": 0,
+    "noerr": 0,
+    "initialize": "",
+    "finalize": "",
+    "libs": [],
+    "x": 150,
+    "y": 160,
+    "wires": [
+      [
+        "5",
+        "6"
+      ]
+    ]
+  },
+  {
+    "id": "7",
+    "type": "MSSQL",
+    "z": "1",
+    "mssqlCN": "mssqlcn0",
+    "name": "call procedure (example)",
+    "query": "EXEC ScanSerial @SerialCode = 'ABC456', @UserID = 2;",
+    "outField": "payload",
+    "x": 450,
+    "y": 180,
+    "wires": [
+      [
+        "6"
+      ]
+    ]
+  },
+  {
+    "id": "6",
+    "type": "debug",
+    "z": "1",
+    "name": "debug 2",
+    "active": true,
+    "tosidebar": true,
+    "console": false,
+    "tostatus": false,
+    "complete": "true",
+    "targetType": "full",
+    "statusVal": "",
+    "statusType": "auto",
+    "x": 440,
+    "y": 260,
+    "wires": []
+  },
+  {
+    "id": "5",
+    "type": "MSSQL",
+    "z": "1",
+    "mssqlCN": "mssqlcn0",
+    "name": "call procedure",
+    "query": "",
+    "outField": "payload",
+    "x": 180,
+    "y": 220,
+    "wires": [
+      [
+        "6"
+      ]
+    ]
+  },
+  {
+    "id": "4",
+    "type": "delay",
+    "z": "1",
+    "name": "",
+    "pauseType": "delay",
+    "timeout": "5",
+    "timeoutUnits": "seconds",
+    "rate": "1",
+    "nbRateUnits": "1",
+    "rateUnits": "second",
+    "randomFirst": "1",
+    "randomLast": "5",
+    "randomUnits": "seconds",
+    "drop": false,
+    "allowrate": false,
+    "outputs": 1,
+    "x": 340,
+    "y": 120,
+    "wires": [
+      [
+        "7"
+      ]
+    ]
+  },
+  {
+    "id": "mssqlcn0",
+    "type": "MSSQL-CN",
+    "name": "",
+    "server": "db",
+    "encyption": true,
+    "database": "master"
+  },
+  {
+    "id": "9",
+    "type": "global-config",
+    "env": [],
+    "modules": {
+      "node-red-contrib-mssql": "0.0.7"
+    }
+  }
+]

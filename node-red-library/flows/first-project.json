@@ -1,0 +1,88 @@
+[
+  {
+    "id": "first-project",
+    "type": "tab",
+    "label": "Check connection",
+    "disabled": false,
+    "info": "",
+    "env": []
+  },
+  {
+    "id": "2",
+    "type": "MSSQL",
+    "z": "1",
+    "mssqlCN": "mssqlcn0",
+    "name": "",
+    "query": "SELECT @@VERSION AS version;",
+    "outField": "payload",
+    "x": 220,
+    "y": 220,
+    "wires": [
+      [
+        "3"
+      ]
+    ]
+  },
+  {
+    "id": "4",
+    "type": "inject",
+    "z": "1",
+    "name": "",
+    "props": [
+      {
+        "p": "payload"
+      },
+      {
+        "p": "topic",
+        "vt": "str"
+      }
+    ],
+    "repeat": "",
+    "crontab": "",
+    "once": false,
+    "onceDelay": 0.1,
+    "topic": "",
+    "payload": "iso",
+    "payloadType": "date",
+    "x": 100,
+    "y": 100,
+    "wires": [
+      [
+        "2"
+      ]
+    ]
+  },
+  {
+    "id": "3",
+    "type": "debug",
+    "z": "1",
+    "name": "debug 1",
+    "active": true,
+    "tosidebar": true,
+    "console": false,
+    "tostatus": false,
+    "complete": "true",
+    "targetType": "full",
+    "statusVal": "",
+    "statusType": "auto",
+    "x": 400,
+    "y": 180,
+    "wires": []
+  },
+  {
+    "id": "mssqlcn0",
+    "type": "MSSQL-CN",
+    "name": "",
+    "server": "db",
+    "encyption": false,
+    "database": "master"
+  },
+  {
+    "id": "6",
+    "type": "global-config",
+    "env": [],
+    "modules": {
+      "node-red-contrib-mssql": "0.0.7"
+    }
+  }
+]

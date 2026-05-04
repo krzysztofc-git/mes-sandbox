@@ -1,0 +1,34 @@
+services:
+  db:
+    image: mcr.microsoft.com/mssql/server:2025-latest
+    # volumes:
+    #   - ../mssql-backups:/var/opt/mssql/backups:rw
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_SA_PASSWORD: "YourStrong!Password123"
+    ports:
+      - "1433:1433"
+    healthcheck:
+      test: ["CMD", "/opt/mssql-tools/bin/sqlcmd", "-S", "localhost", "-U", "sa", "-P", "YourStrong!Password123", "-Q", "select 1"]
+      interval: 10s
+      retries: 10
+
+  node-red:
+    build:
+      context: ..
+      dockerfile: .devcontainer/node-red/Dockerfile
+    environment:
+      - TZ=Europe/Amsterdam
+    ports:
+      - "1880:1880"
+    volumes:
+      - node_red_data:/data
+
+  # cloudbeaver:
+  #   image: dbeaver/cloudbeaver:latest
+  #   ports:
+  #     - "8978:8978"
+
+volumes:
+  node_red_data:
+    name: "node_red_data"

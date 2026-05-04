@@ -1,0 +1,8 @@
+CREATE TABLE dbo.Serials
+(
+  SerialID INT IDENTITY NOT NULL PRIMARY KEY,
+  SerialCode VARCHAR(100) UNIQUE,
+  ProductID INT,
+  Status VARCHAR(20),
+  CreatedAt DATETIME DEFAULT GETDATE()
+)

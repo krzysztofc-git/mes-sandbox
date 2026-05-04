@@ -1,0 +1,13 @@
+node-red-data/*
+!node-red-data/lib/
+!node-red-data/package.json
+!node-red-data/settings.js
+
+*.bak
+
+node_modules/
+package-lock.json
+
+mssql-projects/*/*
+!mssql-projects/*/dbo/
+!mssql-projects/*/*.sqlproj

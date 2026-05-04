@@ -1,0 +1,10 @@
+{
+  "name": "MES Project",
+  "forwardPorts": [1433, 1880/*, 8978*/],
+  "customizations": {
+    "vscode": {
+      "extensions": ["ms-mssql.mssql", "ms-azuretools.vscode-containers"]
+    }
+  }//,
+  // "postStartCommand": "docker-volume-node-red-import.sh"
+}

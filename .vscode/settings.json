@@ -1,0 +1,30 @@
+{
+    "mssql.connectionGroups": [
+        {
+            "name": "ROOT",
+            "id": "ROOT"
+        }
+    ],
+    "mssql.connections": [
+        {
+            "server": "localhost,1433",
+            "port": 1433,
+            "database": "master",
+            "user": "sa",
+            "password": "",
+            "authenticationType": "SqlLogin",
+            "encrypt": "true",
+            "trustServerCertificate": true,
+            "connectTimeout": 30,
+            "commandTimeout": 30,
+            "connectRetryCount": 1,
+            "connectRetryInterval": 10,
+            "applicationName": "vscode-mssql",
+            "savePassword": true,
+            "groupId": "ROOT",
+            "id": "db0",
+            "containerName": "devcontainer-db-1",
+            "profileSource": 0
+        }
+    ]
+}
