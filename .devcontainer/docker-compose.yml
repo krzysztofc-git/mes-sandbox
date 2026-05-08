@@ -1,8 +1,9 @@
 services:
   db:
     image: mcr.microsoft.com/mssql/server:2025-latest
-    # volumes:
+    volumes:
     #   - ../mssql-backups:/var/opt/mssql/backups:rw
+      - db_data:/var/opt/mssql
     environment:
       ACCEPT_EULA: "Y"
       MSSQL_SA_PASSWORD: "YourStrong!Password123"
@@ -28,7 +29,13 @@ services:
   #   image: dbeaver/cloudbeaver:latest
   #   ports:
   #     - "8978:8978"
+  #   volumes:
+  #     - cloudbeaver_data:/opt/cloudbeaver/workspace
 
 volumes:
   node_red_data:
     name: "node_red_data"
+  db_data:
+    name: "db_data"
+  # cloudbeaver_data:
+  #   name: "cloudbeaver_data"

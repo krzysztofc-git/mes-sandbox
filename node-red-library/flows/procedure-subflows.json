@@ -1,0 +1,405 @@
+[
+  {
+    "id": "1",
+    "type": "subflow",
+    "name": "call procedure",
+    "info": "",
+    "category": "",
+    "in": [
+      {
+        "x": 60,
+        "y": 80,
+        "wires": [
+          {
+            "id": "2"
+          }
+        ]
+      }
+    ],
+    "out": [
+      {
+        "x": 1140,
+        "y": 80,
+        "wires": [
+          {
+            "id": "3",
+            "port": 0
+          }
+        ]
+      }
+    ],
+    "env": [],
+    "meta": {},
+    "color": "#DDAA99"
+  },
+  {
+    "id": "4",
+    "type": "function",
+    "z": "1",
+    "name": "prepare command",
+    "func": "msg.payload = `EXEC ${msg.procedure} ${msg.params}`;\nmsg.query = msg.payload;\n\nreturn msg;",
+    "outputs": 1,
+    "timeout": 0,
+    "noerr": 0,
+    "initialize": "",
+    "finalize": "",
+    "libs": [],
+    "x": 530,
+    "y": 80,
+    "wires": [
+      [
+        "5"
+      ]
+    ]
+  },
+  {
+    "id": "5",
+    "type": "MSSQL",
+    "z": "1",
+    "mssqlCN": "mssqlcn0",
+    "name": "",
+    "query": "",
+    "outField": "response",
+    "x": 740,
+    "y": 80,
+    "wires": [
+      [
+        "3"
+      ]
+    ]
+  },
+  {
+    "id": "3",
+    "type": "function",
+    "z": "1",
+    "name": "prepare msg.payload",
+    "func": "msg.payload = {query: msg.query, response: msg.response}\nreturn msg;",
+    "outputs": 1,
+    "timeout": 0,
+    "noerr": 0,
+    "initialize": "",
+    "finalize": "",
+    "libs": [],
+    "x": 960,
+    "y": 80,
+    "wires": [
+      []
+    ]
+  },
+  {
+    "id": "2",
+    "type": "function",
+    "z": "1",
+    "name": "prepare procedure params",
+    "func": "const formattedParams = Object.keys(msg.payload)\n    .map(k => {\n        const v = msg.payload[k];\n        if (typeof v === 'number')\n            return `@${k}=${v}`;\n        return `@${k}='${v}'`;\n    }).join(',');\n\nmsg = {procedure: 'ScanSerial', params: formattedParams};\n\nreturn msg;",
+    "outputs": 1,
+    "timeout": 0,
+    "noerr": 0,
+    "initialize": "",
+    "finalize": "",
+    "libs": [],
+    "x": 260,
+    "y": 80,
+    "wires": [
+      [
+        "4"
+      ]
+    ]
+  },
+  {
+    "id": "6",
+    "type": "subflow",
+    "name": "call ScanSerial procedure",
+    "info": "",
+    "category": "",
+    "in": [
+      {
+        "x": 60,
+        "y": 80,
+        "wires": [
+          {
+            "id": "7"
+          }
+        ]
+      }
+    ],
+    "out": [
+      {
+        "x": 1040,
+        "y": 80,
+        "wires": [
+          {
+            "id": "8",
+            "port": 0
+          }
+        ]
+      }
+    ],
+    "env": [],
+    "meta": {},
+    "color": "#DDAA99"
+  },
+  {
+    "id": "7",
+    "type": "function",
+    "z": "6",
+    "name": "prepare command",
+    "func": "msg.payload = `EXEC ScanSerial @SerialCode = '${msg.payload.serial}', @UserID = ${msg.payload.userId}`;\nreturn msg;",
+    "outputs": 1,
+    "timeout": 0,
+    "noerr": 0,
+    "initialize": "",
+    "finalize": "",
+    "libs": [],
+    "x": 230,
+    "y": 80,
+    "wires": [
+      [
+        "9",
+        "10"
+      ]
+    ]
+  },
+  {
+    "id": "9",
+    "type": "MSSQL",
+    "z": "6",
+    "mssqlCN": "mssqlcn0",
+    "name": "",
+    "query": "",
+    "outField": "response",
+    "x": 460,
+    "y": 120,
+    "wires": [
+      [
+        "10"
+      ]
+    ]
+  },
+  {
+    "id": "8",
+    "type": "function",
+    "z": "6",
+    "name": "prepare msg.payload",
+    "func": "msg.payload = {query: msg.payload.payload, response: msg.payload.response}\nreturn msg;",
+    "outputs": 1,
+    "timeout": 0,
+    "noerr": 0,
+    "initialize": "",
+    "finalize": "",
+    "libs": [],
+    "x": 860,
+    "y": 80,
+    "wires": [
+      []
+    ]
+  },
+  {
+    "id": "10",
+    "type": "join",
+    "z": "6",
+    "name": "",
+    "mode": "custom",
+    "build": "merged",
+    "property": "",
+    "propertyType": "full",
+    "key": "topic",
+    "joiner": "\\n",
+    "joinerType": "str",
+    "useparts": false,
+    "accumulate": false,
+    "timeout": "",
+    "count": "2",
+    "reduceRight": false,
+    "reduceExp": "",
+    "reduceInit": "",
+    "reduceInitType": "num",
+    "reduceFixup": "",
+    "x": 650,
+    "y": 80,
+    "wires": [
+      [
+        "8"
+      ]
+    ]
+  },
+  {
+    "id": "procedure-subflows",
+    "type": "tab",
+    "label": "Procedure subflows",
+    "disabled": false,
+    "info": ""
+  },
+  {
+    "id": "12",
+    "type": "inject",
+    "z": "11",
+    "name": "simulate scan",
+    "props": [
+      {
+        "p": "payload"
+      }
+    ],
+    "repeat": "",
+    "crontab": "",
+    "once": false,
+    "onceDelay": 0.1,
+    "topic": "",
+    "payload": "{\"serial\":\"ABC123\",\"userId\":1}",
+    "payloadType": "json",
+    "x": 130,
+    "y": 80,
+    "wires": [
+      [
+        "13",
+        "14",
+        "15"
+      ]
+    ]
+  },
+  {
+    "id": "16",
+    "type": "MSSQL",
+    "z": "11",
+    "mssqlCN": "mssqlcn0",
+    "name": "call procedure (example)",
+    "query": "EXEC ScanSerial @SerialCode = 'ABC456', @UserID = 2;",
+    "outField": "payload",
+    "x": 710,
+    "y": 80,
+    "wires": [
+      [
+        "17"
+      ]
+    ]
+  },
+  {
+    "id": "17",
+    "type": "debug",
+    "z": "11",
+    "name": "debug 2",
+    "active": true,
+    "tosidebar": true,
+    "console": false,
+    "tostatus": false,
+    "complete": "payload",
+    "targetType": "msg",
+    "statusVal": "",
+    "statusType": "auto",
+    "x": 1000,
+    "y": 180,
+    "wires": []
+  },
+  {
+    "id": "14",
+    "type": "delay",
+    "z": "11",
+    "name": "",
+    "pauseType": "delay",
+    "timeout": "5",
+    "timeoutUnits": "seconds",
+    "rate": "1",
+    "nbRateUnits": "1",
+    "rateUnits": "second",
+    "randomFirst": "1",
+    "randomLast": "5",
+    "randomUnits": "seconds",
+    "drop": false,
+    "allowrate": false,
+    "outputs": 1,
+    "x": 440,
+    "y": 80,
+    "wires": [
+      [
+        "16"
+      ]
+    ]
+  },
+  {
+    "id": "18",
+    "type": "subflow:6",
+    "z": "11",
+    "name": "",
+    "x": 710,
+    "y": 160,
+    "wires": [
+      [
+        "17"
+      ]
+    ]
+  },
+  {
+    "id": "19",
+    "type": "subflow:1",
+    "z": "11",
+    "name": "",
+    "x": 680,
+    "y": 240,
+    "wires": [
+      [
+        "17"
+      ]
+    ]
+  },
+  {
+    "id": "13",
+    "type": "function",
+    "z": "11",
+    "name": "rename params",
+    "func": "msg.payload.SerialCode = msg.payload.serial;\nmsg.payload.UserID = msg.payload.userId;\ndelete msg.payload.serial;\ndelete msg.payload.userId;\nreturn msg;",
+    "outputs": 1,
+    "timeout": 0,
+    "noerr": 0,
+    "initialize": "",
+    "finalize": "",
+    "libs": [],
+    "x": 460,
+    "y": 240,
+    "wires": [
+      [
+        "19"
+      ]
+    ]
+  },
+  {
+    "id": "15",
+    "type": "delay",
+    "z": "11",
+    "name": "",
+    "pauseType": "delay",
+    "timeout": "2",
+    "timeoutUnits": "seconds",
+    "rate": "1",
+    "nbRateUnits": "1",
+    "rateUnits": "second",
+    "randomFirst": "1",
+    "randomLast": "5",
+    "randomUnits": "seconds",
+    "drop": false,
+    "allowrate": false,
+    "outputs": 1,
+    "x": 440,
+    "y": 160,
+    "wires": [
+      [
+        "18"
+      ]
+    ]
+  },
+  {
+    "id": "mssqlcn0",
+    "type": "MSSQL-CN",
+    "name": "",
+    "server": "db",
+    "encyption": true,
+    "database": "master"
+  },
+  {
+    "id": "21",
+    "type": "global-config",
+    "env": [],
+    "modules": {
+      "node-red-contrib-mssql": "0.0.7"
+    }
+  }
+]
