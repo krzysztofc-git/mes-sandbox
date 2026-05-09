@@ -33,6 +33,8 @@ This project provides a containerized development environment that allows to sim
 
 1. Click "Database Projects" icon located on Activity Bar (left sidebar). A panel will open.
 2. Right click on the project "master" and select "Publish". A tab will open.
+> [!TIP]
+> You can also use "Schema Compare" option instead of "Publish" to apply changes to the database.
 3. Select server.
 4. Click "Publish" button.
 > [!NOTE]
@@ -44,15 +46,15 @@ This project provides a containerized development environment that allows to sim
 2. Hover over the link of Port 1880 and click "Open in Browser" button. It will open Node-RED.
 3. From hamburger menu (in upper right corner), select "Import".
 4. Select "Local" tab.
-5. Select a JSON file.
-6. Click "Import" button. The project content will get attached to your mouse pointer.
-7. Click on empty space in the editor to place the project content.
+5. Select `setup.json` file.
+6. Click "Import" button.
 > [!IMPORTANT]
-> A popup may appear when importing another project. On the popup, click "View nodes..." button. A window will appear. In the window, click "Import selected" to proceed.
-8. From "info" tab (in right sidebar) open `Global Configuration Nodes / MSSQL-CN` and double click on `MSSQL-CN` item. A panel will open.
-9. In "Properties" tab, fill the username field (`sa`) and the password field (`YourStrong!Password123`).
-10. Click "Update" to save changes.
-11. You can now click "Deploy" (in upper right corner) and check functionalities.
+> A popup may appear when importing another project. On the popup, click "Import copy" button to proceed.
+7. From "info" tab (in right sidebar) open `Global Configuration Nodes / MSSQL-CN` and double click on `MSSQL-CN` item. A panel will open.
+8. In "Properties" tab, fill the username field (`sa`) and the password field (`YourStrong!Password123`).
+9. Click "Update" to save changes.
+10. Right click on "Setup" tab and select "Delete".
+11. You can now import other projects, click "Deploy" (in upper right corner) and check functionalities.
 
 ## Usage
 
@@ -84,8 +86,8 @@ Edit `MSSQL` node connection properties:
 
 ### CloudBeaver
 
-1. From `.devcontainer/docker-compose.yml`, uncomment "cloudbeaver" service.
-2. From `.devcontainer/docker-compose.yml` uncomment port "8978".
+1. From `.devcontainer/docker-compose.yml`, uncomment "cloudbeaver" service and "cloudbeaver_data" volume.
+2. From `.devcontainer/devcontainer.json` uncomment port "8978".
 3. Run the service and access it in browser.
 4. When setting up, make sure to select "Trust Server Certificate".
 

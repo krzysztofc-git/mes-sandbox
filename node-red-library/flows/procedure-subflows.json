@@ -224,11 +224,12 @@
     ]
   },
   {
-    "id": "procedure-subflows",
+    "id": "11",
     "type": "tab",
     "label": "Procedure subflows",
     "disabled": false,
-    "info": ""
+    "info": "",
+    "env": []
   },
   {
     "id": "12",

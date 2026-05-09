@@ -1,6 +1,5 @@
 // Usage: node script.js input.json
 const fs = require('fs');
-const path = require('path');
 
 const infile = process.argv[2];
 if (!infile) { console.error('Provide input file'); process.exit(1); }
@@ -44,7 +43,6 @@ data.forEach(node=>{
     });
   }
   if (node.wires) node.wires = node.wires.map(arr => arr.map(id => getId(id)));
-  if (node.type == 'tab') node.id = path.parse(infile).name;
   if (node.type == 'MSSQL-CN') node.id = 'mssqlcn0';
   if (node.mssqlCN) node.mssqlCN = 'mssqlcn0';
 });

@@ -1,0 +1,40 @@
+[
+  {
+    "id": "1",
+    "type": "tab",
+    "label": "Setup",
+    "disabled": false,
+    "info": "",
+    "env": []
+  },
+  {
+    "id": "2",
+    "type": "MSSQL",
+    "z": "1",
+    "mssqlCN": "mssqlcn0",
+    "name": "",
+    "query": "",
+    "outField": "payload",
+    "x": 140,
+    "y": 60,
+    "wires": [
+      []
+    ]
+  },
+  {
+    "id": "mssqlcn0",
+    "type": "MSSQL-CN",
+    "name": "",
+    "server": "db",
+    "encyption": true,
+    "database": "master"
+  },
+  {
+    "id": "4",
+    "type": "global-config",
+    "env": [],
+    "modules": {
+      "node-red-contrib-mssql": "0.0.7"
+    }
+  }
+]
