@@ -9,6 +9,27 @@ This project provides a containerized development environment that allows to sim
 - SQL Server Data Tools (.sqlproj)
 - JavaScript (Node-RED function nodes)
 
+## Preview of "scanserial-ui.json" flow in Node-RED
+ScanSerial flows are connected across tabs using Link nodes located at the beginning and the end of each flow.
+
+- "ScanSerial UI" flow
+![ScanSerial UI flow](README_images/scanserial_ui_flow.png)
+
+- "ScanSerial Action" flow
+![ScanSerial Action flow](README_images/scanserial_action_flow.png)
+
+- "Global Translations" subflow
+![Global Translations subflow properties](README_images/global_translations_subflow.png)
+
+- "Global Translations" subflow properties
+![Global Translations subflow properties](README_images/global_translations_subflow_properties.png)
+
+- "call ScanSerial procedure" subflow
+![call ScanSerial procedure subflow](README_images/call_scanserial_procedure_subflow.png)
+
+- "get Scanlog if no error" subflow
+![get Scanlog if no error subflow](README_images/get_scanlog_if_no_error_subflow.png)
+
 ## General setup (using VS Code)
 
 ### Prepare Dockerfile for "node_modules" folder import (Optional)
@@ -55,6 +76,8 @@ This project provides a containerized development environment that allows to sim
 9. Click "Update" to save changes.
 10. Right click on "Setup" tab and select "Delete".
 11. You can now import other projects, click "Deploy" (in upper right corner) and check functionalities.
+> [!IMPORTANT]
+> Imported "uibuilder" nodes have `<no url>` value. Replace them with URL matching imported project name (e.g. for "scanserial-ui.json" project, set URL: `scanserial-ui`). Refer to a specific project structure in folders: "node-red-uibuilder" and "node-red-library".
 
 ## Usage
 
@@ -83,6 +106,7 @@ Edit `MSSQL` node connection properties:
 - Domain: (leave empty)
 - Database: `master`
 - Use Encryption?: (checked)
+- Trust Certificate?: (checked)
 
 ### CloudBeaver
 

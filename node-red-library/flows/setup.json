@@ -13,8 +13,9 @@
     "z": "1",
     "mssqlCN": "mssqlcn0",
     "name": "",
-    "query": "",
     "outField": "payload",
+    "query": "",
+    "parseMustache": true,
     "x": 140,
     "y": 60,
     "wires": [
@@ -26,15 +27,25 @@
     "type": "MSSQL-CN",
     "name": "",
     "server": "db",
+    "port": "",
     "encyption": true,
-    "database": "master"
+    "trustServerCertificate": true,
+    "database": "master",
+    "useUTC": false,
+    "connectTimeout": "",
+    "requestTimeout": "",
+    "cancelTimeout": "",
+    "pool": "",
+    "parseJSON": false,
+    "enableArithAbort": true,
+    "readOnlyIntent": false
   },
   {
     "id": "4",
     "type": "global-config",
     "env": [],
     "modules": {
-      "node-red-contrib-mssql": "0.0.7"
+      "node-red-contrib-mssql-plus": "0.13.1"
     }
   }
 ]

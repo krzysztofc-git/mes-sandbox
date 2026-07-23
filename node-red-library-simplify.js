@@ -43,8 +43,12 @@ data.forEach(node=>{
     });
   }
   if (node.wires) node.wires = node.wires.map(arr => arr.map(id => getId(id)));
+  if (Array.isArray(node.links)) {
+    node.links = node.links.map(id => getId(id));
+  }
   if (node.type == 'MSSQL-CN') node.id = 'mssqlcn0';
   if (node.mssqlCN) node.mssqlCN = 'mssqlcn0';
+  if (node.type == 'uibuilder') node.editurl = '';
 });
 
 fs.copyFileSync(infile, backup); // create backup

@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="icon" href="../uibuilder/images/uib-world.svg" type="image/svg+xml">
+        <title>ScanSerial UI</title>
+        <script defer src="../uibuilder/uibuilder.iife.min.js"></script>
+        <script defer src="./index.js"></script>
+    </head>
+    <body>
+        <h1>ScanSerial UI</h1>
+        <input id="serialInput" type="text" />
+        <button onclick="sendScan()">Scan</button>
+        <p id="errorText"></p>
+        <table border="1">
+            <thead>
+                <tr>
+                    <th>LogID</th>
+                    <th>SerialCode</th>
+                    <th>ScanTime</th>
+                    <th>Result</th>
+                    <th>UserID</th>
+                </tr>
+            </thead>
+            <tbody id="scanTable"></tbody>
+        </table>
+        Last updated: <span id="lastUpdated">loading...</span>
+    </body>
+</html>

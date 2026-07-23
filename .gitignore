@@ -11,3 +11,7 @@ package-lock.json
 mssql-projects/*/*
 !mssql-projects/*/dbo/
 !mssql-projects/*/*.sqlproj
+
+node-red-uibuilder/package.json
+node-red-uibuilder/*/*
+!node-red-uibuilder/*/src
