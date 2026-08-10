@@ -1,0 +1,6 @@
+CREATE TABLE dbo.Stations
+(
+  StationID INT IDENTITY (1, 1) NOT NULL,
+  StationName VARCHAR (100),
+  CONSTRAINT PK_Stations PRIMARY KEY CLUSTERED (StationID ASC)
+)

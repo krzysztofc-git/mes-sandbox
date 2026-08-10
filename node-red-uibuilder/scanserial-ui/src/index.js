@@ -4,7 +4,8 @@ function sendScan() {
     uibuilder.send({
         payload: {
             serial: serial,
-            userId: 1
+            userId: 1,
+            stationId: 1
         }
     });
 }
@@ -31,7 +32,7 @@ uibuilder.onChange('msg', function(msg) {
             const row = `
                 <tr>
                     <td>${scan.LogID}</td>
-                    <td>${scan.SerialCode}</td>
+                    <td>${scan.SerialID}</td>
                     <td>${scan.ScanTime}</td>
                     <td>${scan.Result}</td>
                     <td>${scan.UserID}</td>

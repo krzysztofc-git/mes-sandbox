@@ -1,0 +1,392 @@
+[
+  {
+    "id": "1",
+    "type": "tab",
+    "label": "Data Import",
+    "disabled": false,
+    "info": "",
+    "env": []
+  },
+  {
+    "id": "2",
+    "type": "inject",
+    "z": "1",
+    "name": "1. Products, Stations, Users",
+    "props": [
+      {
+        "p": "payload"
+      },
+      {
+        "p": "topic",
+        "vt": "str"
+      }
+    ],
+    "repeat": "",
+    "crontab": "",
+    "once": false,
+    "onceDelay": 0.1,
+    "topic": "",
+    "payload": "",
+    "payloadType": "str",
+    "x": 160,
+    "y": 80,
+    "wires": [
+      [
+        "3",
+        "4",
+        "5"
+      ]
+    ]
+  },
+  {
+    "id": "3",
+    "type": "template",
+    "z": "1",
+    "name": "Products csv",
+    "field": "payload",
+    "fieldType": "msg",
+    "format": "html",
+    "syntax": "plain",
+    "template": ",ProductCode,ProductID,ProductName\n,product 1,1,Product 1\n,product 2,2,Product 2\n,product 3,3,Product 3",
+    "output": "str",
+    "x": 470,
+    "y": 80,
+    "wires": [
+      [
+        "6"
+      ]
+    ]
+  },
+  {
+    "id": "7",
+    "type": "inject",
+    "z": "1",
+    "name": "2. Serials",
+    "props": [
+      {
+        "p": "payload"
+      },
+      {
+        "p": "topic",
+        "vt": "str"
+      }
+    ],
+    "repeat": "",
+    "crontab": "",
+    "once": false,
+    "onceDelay": 0.1,
+    "topic": "",
+    "payload": "",
+    "payloadType": "str",
+    "x": 100,
+    "y": 260,
+    "wires": [
+      [
+        "8"
+      ]
+    ]
+  },
+  {
+    "id": "8",
+    "type": "template",
+    "z": "1",
+    "name": "Serials csv",
+    "field": "payload",
+    "fieldType": "msg",
+    "format": "html",
+    "syntax": "plain",
+    "template": ",SerialID,SerialCode,ProductID,CurrentStationID,CreatedAt,Status\n,1,A01,1,1,2020-01-01 12:00:00.000,ACTIVE\n,2,A02,2,3,2020-01-01 12:00:00.000,SCRAPPED\n,3,B01,3,4,2020-01-01 12:00:00.000,COMPLETED\n,4,B02,1,2,2020-01-01 12:00:00.000,HOLD",
+    "output": "str",
+    "x": 470,
+    "y": 260,
+    "wires": [
+      [
+        "9"
+      ]
+    ]
+  },
+  {
+    "id": "4",
+    "type": "template",
+    "z": "1",
+    "name": "Stations csv",
+    "field": "payload",
+    "fieldType": "msg",
+    "format": "html",
+    "syntax": "plain",
+    "template": ",StationID,StationName\n,1,Assembly\n,2,Test\n,3,Packaging\n,4,Finished",
+    "output": "str",
+    "x": 470,
+    "y": 140,
+    "wires": [
+      [
+        "10"
+      ]
+    ]
+  },
+  {
+    "id": "5",
+    "type": "template",
+    "z": "1",
+    "name": "Users csv",
+    "field": "payload",
+    "fieldType": "msg",
+    "format": "html",
+    "syntax": "plain",
+    "template": ",UserID,Username\n,1,User 1\n,2,User 2\n,3,User 3\n,4,User 4",
+    "output": "str",
+    "x": 460,
+    "y": 200,
+    "wires": [
+      [
+        "11"
+      ]
+    ]
+  },
+  {
+    "id": "12",
+    "type": "MSSQL",
+    "z": "1",
+    "mssqlCN": "mssqlcn0",
+    "name": "",
+    "outField": "payload",
+    "returnType": 0,
+    "throwErrors": 1,
+    "query": "",
+    "modeOpt": "queryMode",
+    "modeOptType": "query",
+    "queryOpt": "payload",
+    "queryOptType": "msg",
+    "paramsOpt": "queryParams",
+    "paramsOptType": "none",
+    "rows": "rows",
+    "rowsType": "msg",
+    "parseMustache": true,
+    "params": [],
+    "x": 1240,
+    "y": 180,
+    "wires": [
+      [
+        "13"
+      ]
+    ]
+  },
+  {
+    "id": "6",
+    "type": "csv",
+    "z": "1",
+    "name": "",
+    "spec": "rfc",
+    "sep": ",",
+    "hdrin": true,
+    "hdrout": "none",
+    "multi": "one",
+    "ret": "\\r\\n",
+    "temp": "",
+    "skip": "0",
+    "strings": true,
+    "include_empty_strings": "",
+    "include_null_values": "",
+    "x": 670,
+    "y": 80,
+    "wires": [
+      [
+        "14"
+      ]
+    ]
+  },
+  {
+    "id": "10",
+    "type": "csv",
+    "z": "1",
+    "name": "",
+    "spec": "rfc",
+    "sep": ",",
+    "hdrin": true,
+    "hdrout": "none",
+    "multi": "one",
+    "ret": "\\r\\n",
+    "temp": "",
+    "skip": "0",
+    "strings": true,
+    "include_empty_strings": "",
+    "include_null_values": "",
+    "x": 670,
+    "y": 140,
+    "wires": [
+      [
+        "15"
+      ]
+    ]
+  },
+  {
+    "id": "11",
+    "type": "csv",
+    "z": "1",
+    "name": "",
+    "spec": "rfc",
+    "sep": ",",
+    "hdrin": true,
+    "hdrout": "none",
+    "multi": "one",
+    "ret": "\\r\\n",
+    "temp": "",
+    "skip": "0",
+    "strings": true,
+    "include_empty_strings": "",
+    "include_null_values": "",
+    "x": 670,
+    "y": 200,
+    "wires": [
+      [
+        "16"
+      ]
+    ]
+  },
+  {
+    "id": "9",
+    "type": "csv",
+    "z": "1",
+    "name": "",
+    "spec": "rfc",
+    "sep": ",",
+    "hdrin": true,
+    "hdrout": "none",
+    "multi": "one",
+    "ret": "\\r\\n",
+    "temp": "",
+    "skip": "0",
+    "strings": true,
+    "include_empty_strings": "",
+    "include_null_values": "",
+    "x": 670,
+    "y": 260,
+    "wires": [
+      [
+        "17"
+      ]
+    ]
+  },
+  {
+    "id": "13",
+    "type": "debug",
+    "z": "1",
+    "name": "debug 1",
+    "active": true,
+    "tosidebar": true,
+    "console": false,
+    "tostatus": false,
+    "complete": "false",
+    "statusVal": "",
+    "statusType": "auto",
+    "x": 1480,
+    "y": 180,
+    "wires": []
+  },
+  {
+    "id": "16",
+    "type": "function",
+    "z": "1",
+    "name": "prepare Users Insert with Identity",
+    "func": "msg.payload = `SET IDENTITY_INSERT Users ON; INSERT INTO Users(UserID, Username) VALUES (${msg.payload.UserID}, '${msg.payload.Username}')`;\nreturn msg;",
+    "outputs": 1,
+    "timeout": 0,
+    "noerr": 0,
+    "initialize": "",
+    "finalize": "",
+    "libs": [],
+    "x": 940,
+    "y": 200,
+    "wires": [
+      [
+        "12"
+      ]
+    ]
+  },
+  {
+    "id": "17",
+    "type": "function",
+    "z": "1",
+    "name": "prepare Serial Insert with Identity",
+    "func": "msg.payload = `SET IDENTITY_INSERT Serials ON; INSERT INTO Serials(SerialID, SerialCode, ProductID, CurrentStationID, CreatedAt, Status) VALUES (${msg.payload.SerialID}, '${msg.payload.SerialCode}', ${msg.payload.ProductID}, ${msg.payload.CurrentStationID}, '${msg.payload.CreatedAt}', '${msg.payload.Status}')`;\nreturn msg;",
+    "outputs": 1,
+    "timeout": 0,
+    "noerr": 0,
+    "initialize": "",
+    "finalize": "",
+    "libs": [],
+    "x": 940,
+    "y": 260,
+    "wires": [
+      [
+        "12"
+      ]
+    ]
+  },
+  {
+    "id": "15",
+    "type": "function",
+    "z": "1",
+    "name": "prepare Stations Insert with Identity",
+    "func": "msg.payload = `SET IDENTITY_INSERT Stations ON; INSERT INTO Stations(StationID, StationName) VALUES (${msg.payload.StationID}, '${msg.payload.StationName}')`;\nreturn msg;",
+    "outputs": 1,
+    "timeout": 0,
+    "noerr": 0,
+    "initialize": "",
+    "finalize": "",
+    "libs": [],
+    "x": 940,
+    "y": 140,
+    "wires": [
+      [
+        "12"
+      ]
+    ]
+  },
+  {
+    "id": "14",
+    "type": "function",
+    "z": "1",
+    "name": "prepare Users Insert with Identity",
+    "func": "msg.payload = `SET IDENTITY_INSERT Products ON; INSERT INTO Products(ProductCode, ProductID, ProductName) VALUES ('${msg.payload.ProductCode}', ${msg.payload.ProductID}, '${msg.payload.ProductName}')`;\nreturn msg;",
+    "outputs": 1,
+    "timeout": 0,
+    "noerr": 0,
+    "initialize": "",
+    "finalize": "",
+    "libs": [],
+    "x": 940,
+    "y": 80,
+    "wires": [
+      [
+        "12"
+      ]
+    ]
+  },
+  {
+    "id": "mssqlcn0",
+    "type": "MSSQL-CN",
+    "name": "",
+    "server": "db",
+    "port": "",
+    "encyption": true,
+    "trustServerCertificate": true,
+    "database": "master",
+    "useUTC": false,
+    "connectTimeout": "",
+    "requestTimeout": "",
+    "cancelTimeout": "",
+    "pool": "",
+    "parseJSON": false,
+    "enableArithAbort": true,
+    "readOnlyIntent": false
+  },
+  {
+    "id": "19",
+    "type": "global-config",
+    "env": [],
+    "modules": {
+      "node-red-contrib-mssql-plus": "0.13.1"
+    }
+  }
+]

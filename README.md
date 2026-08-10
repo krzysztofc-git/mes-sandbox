@@ -30,6 +30,15 @@ ScanSerial flows are connected across tabs using Link nodes located at the begin
 - "get Scanlog if no error" subflow
 ![get Scanlog if no error subflow](README_images/get_scanlog_if_no_error_subflow.png)
 
+## Quick Start Guide
+1. Run Docker Compose from `.devcontainer/docker-compose.yml`
+2. Deploy Database from `mssql-projects/master/master.sqlproj`
+3. Access Node-RED interface from port 1880 and import `node-red-library/flows` in order:
+    1. "setup.json" (used to configure database and allow other projects to be imported as a copy) - delete the tab before clicking Deploy!
+    2. "data-import.json" (fills database tables with example data that allows further usage)
+    3. "scanserial-ui.json" (allows to use web app `node-red-uibuilder/scanserial-ui-react`)
+4. Read [Additional setup](#additional-setup) section below to learn how to access database and more.
+
 ## General setup (using VS Code)
 
 ### Prepare Dockerfile for "node_modules" folder import (Optional)

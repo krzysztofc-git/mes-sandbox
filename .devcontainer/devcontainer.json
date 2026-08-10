@@ -3,7 +3,7 @@
   "forwardPorts": [1433, 1880/*, 8978*/],
   "customizations": {
     "vscode": {
-      "extensions": ["ms-mssql.mssql", "ms-azuretools.vscode-containers"]
+      "extensions": ["ms-mssql.mssql", "ms-azuretools.vscode-containers", "dbaeumer.vscode-eslint"]
     }
   }//,
   // "postStartCommand": "docker-volume-node-red-import.sh"

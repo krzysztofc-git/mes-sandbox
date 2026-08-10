@@ -8,7 +8,6 @@
     "mssql.connections": [
         {
             "server": "localhost,1433",
-            "port": 1433,
             "database": "master",
             "user": "sa",
             "password": "",

@@ -6,6 +6,7 @@ node-red-data/*
 *.bak
 
 node_modules/
+node_modules_react/
 package-lock.json
 
 mssql-projects/*/*
@@ -15,3 +16,6 @@ mssql-projects/*/*
 node-red-uibuilder/package.json
 node-red-uibuilder/*/*
 !node-red-uibuilder/*/src
+
+!node-red-uibuilder/*-react/*
+!node-red-uibuilder/*-react/.gitignore
