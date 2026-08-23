@@ -1,4 +1,5 @@
 import { Provider } from '@/components/ui/provider'
+import { Toaster } from '@/components/ui/toaster'
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import App from './App.jsx'
@@ -10,6 +11,7 @@ createRoot(document.getElementById('root')).render(
       <Box padding="10px" maxWidth="720px" marginInline="auto">
         <App />
       </Box>
+      <Toaster />
     </Provider>
   </StrictMode>
 )

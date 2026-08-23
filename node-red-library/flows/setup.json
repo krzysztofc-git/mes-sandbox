@@ -31,7 +31,7 @@
     "encyption": true,
     "trustServerCertificate": true,
     "database": "master",
-    "useUTC": false,
+    "useUTC": true,
     "connectTimeout": "",
     "requestTimeout": "",
     "cancelTimeout": "",

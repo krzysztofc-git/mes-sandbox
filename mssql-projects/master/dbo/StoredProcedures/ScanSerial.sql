@@ -1,7 +1,9 @@
 CREATE PROCEDURE dbo.ScanSerial
   @SerialCode VARCHAR(100),
   @UserID INT,
-  @StationID INT
+  @StationID INT,
+  @Result VARCHAR(20) OUTPUT,
+  @ProductName VARCHAR(100) OUTPUT
 AS
   BEGIN
     BEGIN TRY
@@ -18,26 +20,35 @@ AS
       FROM Serials
       WHERE SerialCode = @SerialCode;
 
+      SELECT @ProductName = ProductName
+      FROM Products AS P
+      INNER JOIN Serials AS S
+        ON P.ProductID = S.ProductID
+      WHERE S.SerialID = @SerialID;
+
       IF @Status IS NULL
       BEGIN
+        SET @Result = 'NOT FOUND';
         INSERT INTO ScanLog (SerialID, Result, UserID)
-        VALUES (@SerialID, 'NOT FOUND', @UserID);
-
-        COMMIT; -- should be "ROLLBACK" but set to "COMMIT" for testing
-        RETURN;
-      END
-
-      IF @Status = 'SCRAPPED'
-      BEGIN
-        INSERT INTO ScanLog (SerialID, Result, UserID)
-        VALUES (@SerialID, 'SCRAPPED', @UserID);
+        VALUES (@SerialID, @Result, @UserID);
 
         ROLLBACK;
         RETURN;
       END
 
+      IF @Status = 'SCRAPPED'
+      BEGIN
+        SET @Result = 'SCRAPPED';
+        INSERT INTO ScanLog (SerialID, Result, UserID)
+        VALUES (@SerialID, @Result, @UserID);
+
+        ROLLBACK;
+        RETURN;
+      END
+
+      SET @Result = 'OK';
       INSERT INTO ScanLog (SerialID, Result, UserID)
-      VALUES (@SerialID, 'OK', @UserID);
+      VALUES (@SerialID, @Result, @UserID);
 
       COMMIT;
     END TRY
