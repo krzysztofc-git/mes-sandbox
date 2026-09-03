@@ -35,7 +35,7 @@ WORKDIR /data/uibuilder/scanserial-ui-react
 # COPY .devcontainer/node-red/node_modules_react/. /data/uibuilder_temp/scanserial-ui-react/node_modules
 RUN npm install
 RUN chmod +x add_dependency_files.sh && ./add_dependency_files.sh
+RUN sed -i 's|script type="module" src="sqlite-uibuilder.js"|script src="../uibuilder/uibuilder.iife.min.js"|g' index.html
 RUN npm run build
-RUN sed -i 's|"mock-uibuilder.js"|"../uibuilder/uibuilder.iife.min.js"|g' src/index.html
 WORKDIR /usr/src/node-red
 # ---

@@ -1,6 +1,6 @@
 # Manufacturing Execution System (MES) Sandbox
 
-This project provides a containerized development environment that allows to simulate manufacturing workflows such as traceability, event logging and validation. It uses Docker to run Node-RED and SQL Server.
+This project provides a containerized development environment that allows to simulate manufacturing workflows such as traceability, event logging and validation. It uses Docker to run Node-RED and SQL Server. Webpages can be developed locally without running Node-RED or remotely using Docker commands.
 
 ## Tech stack
 - Node-RED (workflow automation)
@@ -31,13 +31,19 @@ ScanSerial flows are connected across tabs using Link nodes located at the begin
 ![get Scanlog if no error subflow](README_images/get_scanlog_if_no_error_subflow.png)
 
 ## Quick Start Guide
-1. Run Docker Compose from `.devcontainer/docker-compose.yml`
-2. Deploy Database from `mssql-projects/master/master.sqlproj`
+
+### Full version (Node-RED and SQL Server)
+1. Run Docker Compose from `.devcontainer/docker-compose.yml`.
+2. Deploy Database from `mssql-projects/master/master.sqlproj`.
 3. Access Node-RED interface from port 1880 and import `node-red-library/flows` in order:
     1. "setup.json" (used to configure database and allow other projects to be imported as a copy) - delete the tab before clicking Deploy!
-    2. "data-import.json" (fills database tables with example data that allows further usage)
-    3. "scanserial-ui.json" (allows to use web app `node-red-uibuilder/scanserial-ui-react`)
+    2. "data-import.json" (fills database tables with example data that allows further usage).
+    3. "scanserial-ui.json" (allows to use web app `node-red-uibuilder/scanserial-ui-react`).
 4. Read [Additional setup](#additional-setup) section below to learn how to access database and more.
+
+### Webpage version (Vite and SQLite Wasm)
+1. Install dependencies using `install_react_mock.sh`.
+2. Run development server using `run_react_mock.sh`.
 
 ## General setup (using VS Code)
 
