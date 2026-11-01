@@ -61,7 +61,7 @@
     "id": "7",
     "type": "inject",
     "z": "1",
-    "name": "2. Serials",
+    "name": "2. Serials, StationAllowedRoutes",
     "props": [
       {
         "p": "payload"
@@ -78,11 +78,12 @@
     "topic": "",
     "payload": "",
     "payloadType": "str",
-    "x": 100,
+    "x": 170,
     "y": 260,
     "wires": [
       [
-        "8"
+        "8",
+        "9"
       ]
     ]
   },
@@ -101,7 +102,7 @@
     "y": 260,
     "wires": [
       [
-        "9"
+        "10"
       ]
     ]
   },
@@ -120,7 +121,7 @@
     "y": 140,
     "wires": [
       [
-        "10"
+        "11"
       ]
     ]
   },
@@ -139,12 +140,12 @@
     "y": 200,
     "wires": [
       [
-        "11"
+        "12"
       ]
     ]
   },
   {
-    "id": "12",
+    "id": "13",
     "type": "MSSQL",
     "z": "1",
     "mssqlCN": "mssqlcn0",
@@ -167,7 +168,7 @@
     "y": 180,
     "wires": [
       [
-        "13"
+        "14"
       ]
     ]
   },
@@ -191,30 +192,6 @@
     "y": 80,
     "wires": [
       [
-        "14"
-      ]
-    ]
-  },
-  {
-    "id": "10",
-    "type": "csv",
-    "z": "1",
-    "name": "",
-    "spec": "rfc",
-    "sep": ",",
-    "hdrin": true,
-    "hdrout": "none",
-    "multi": "one",
-    "ret": "\\r\\n",
-    "temp": "",
-    "skip": "0",
-    "strings": true,
-    "include_empty_strings": "",
-    "include_null_values": "",
-    "x": 670,
-    "y": 140,
-    "wires": [
-      [
         "15"
       ]
     ]
@@ -236,7 +213,7 @@
     "include_empty_strings": "",
     "include_null_values": "",
     "x": 670,
-    "y": 200,
+    "y": 140,
     "wires": [
       [
         "16"
@@ -244,7 +221,31 @@
     ]
   },
   {
-    "id": "9",
+    "id": "12",
+    "type": "csv",
+    "z": "1",
+    "name": "",
+    "spec": "rfc",
+    "sep": ",",
+    "hdrin": true,
+    "hdrout": "none",
+    "multi": "one",
+    "ret": "\\r\\n",
+    "temp": "",
+    "skip": "0",
+    "strings": true,
+    "include_empty_strings": "",
+    "include_null_values": "",
+    "x": 670,
+    "y": 200,
+    "wires": [
+      [
+        "17"
+      ]
+    ]
+  },
+  {
+    "id": "10",
     "type": "csv",
     "z": "1",
     "name": "",
@@ -263,12 +264,12 @@
     "y": 260,
     "wires": [
       [
-        "17"
+        "18"
       ]
     ]
   },
   {
-    "id": "18",
+    "id": "19",
     "type": "debug",
     "z": "1",
     "name": "debug 1",
@@ -285,7 +286,7 @@
     "wires": []
   },
   {
-    "id": "16",
+    "id": "17",
     "type": "function",
     "z": "1",
     "name": "prepare Users Insert with Identity",
@@ -300,12 +301,12 @@
     "y": 200,
     "wires": [
       [
-        "12"
+        "13"
       ]
     ]
   },
   {
-    "id": "17",
+    "id": "18",
     "type": "function",
     "z": "1",
     "name": "prepare Serial Insert with Identity",
@@ -320,12 +321,12 @@
     "y": 260,
     "wires": [
       [
-        "12"
+        "13"
       ]
     ]
   },
   {
-    "id": "15",
+    "id": "16",
     "type": "function",
     "z": "1",
     "name": "prepare Stations Insert with Identity",
@@ -340,12 +341,12 @@
     "y": 140,
     "wires": [
       [
-        "12"
+        "13"
       ]
     ]
   },
   {
-    "id": "14",
+    "id": "15",
     "type": "function",
     "z": "1",
     "name": "prepare Users Insert with Identity",
@@ -360,12 +361,12 @@
     "y": 80,
     "wires": [
       [
-        "12"
+        "13"
       ]
     ]
   },
   {
-    "id": "13",
+    "id": "14",
     "type": "switch",
     "z": "1",
     "name": "",
@@ -388,15 +389,15 @@
     "y": 140,
     "wires": [
       [
-        "19"
+        "20"
       ],
       [
-        "20"
+        "21"
       ]
     ]
   },
   {
-    "id": "20",
+    "id": "21",
     "type": "join",
     "z": "1",
     "name": "merge errors each second",
@@ -420,12 +421,12 @@
     "y": 180,
     "wires": [
       [
-        "21"
+        "22"
       ]
     ]
   },
   {
-    "id": "21",
+    "id": "22",
     "type": "function",
     "z": "1",
     "name": "function 1",
@@ -440,12 +441,12 @@
     "y": 180,
     "wires": [
       [
-        "18"
+        "19"
       ]
     ]
   },
   {
-    "id": "19",
+    "id": "20",
     "type": "join",
     "z": "1",
     "name": "merge errors each second",
@@ -469,7 +470,70 @@
     "y": 120,
     "wires": [
       [
-        "21"
+        "22"
+      ]
+    ]
+  },
+  {
+    "id": "9",
+    "type": "template",
+    "z": "1",
+    "name": "StationAllowedRoutes csv",
+    "field": "payload",
+    "fieldType": "msg",
+    "format": "html",
+    "syntax": "plain",
+    "template": ",StationAllowedRouteID,FromStationID,ToStationID\n,1,1,2\n,2,2,3\n,3,2,1\n,4,3,4",
+    "output": "str",
+    "x": 510,
+    "y": 320,
+    "wires": [
+      [
+        "23"
+      ]
+    ]
+  },
+  {
+    "id": "23",
+    "type": "csv",
+    "z": "1",
+    "name": "",
+    "spec": "rfc",
+    "sep": ",",
+    "hdrin": true,
+    "hdrout": "none",
+    "multi": "one",
+    "ret": "\\r\\n",
+    "temp": "",
+    "skip": "0",
+    "strings": true,
+    "include_empty_strings": "",
+    "include_null_values": "",
+    "x": 710,
+    "y": 320,
+    "wires": [
+      [
+        "24"
+      ]
+    ]
+  },
+  {
+    "id": "24",
+    "type": "function",
+    "z": "1",
+    "name": "prepare StationAllowedRoutes Insert with Identity",
+    "func": "msg.payload = `SET IDENTITY_INSERT StationAllowedRoutes ON; INSERT INTO StationAllowedRoutes(StationAllowedRouteID,FromStationID,ToStationID) VALUES (${msg.payload.StationAllowedRouteID},${msg.payload.FromStationID}, ${msg.payload.ToStationID})`;\nreturn msg;",
+    "outputs": 1,
+    "timeout": 0,
+    "noerr": 0,
+    "initialize": "",
+    "finalize": "",
+    "libs": [],
+    "x": 990,
+    "y": 320,
+    "wires": [
+      [
+        "13"
       ]
     ]
   },
@@ -492,7 +556,7 @@
     "readOnlyIntent": false
   },
   {
-    "id": "23",
+    "id": "26",
     "type": "global-config",
     "env": [],
     "modules": {

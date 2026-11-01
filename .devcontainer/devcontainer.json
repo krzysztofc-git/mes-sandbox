@@ -1,5 +1,15 @@
 {
   "name": "MES Project",
+  "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
+  "features": {
+    "ghcr.io/devcontainers/features/node:2": {
+      "version": "lts"
+    },
+    "ghcr.io/devcontainers/features/docker-in-docker:4": {
+      "version": "latest",
+      "moby": true
+    }
+  },
   "forwardPorts": [1433, 1880/*, 8978*/],
   "customizations": {
     "vscode": {

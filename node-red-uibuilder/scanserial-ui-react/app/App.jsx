@@ -128,10 +128,12 @@ export default function App() {
           <Table.Header>
             <Table.Row>
               <Table.ColumnHeader>LogID</Table.ColumnHeader>
-              <Table.ColumnHeader>SerialID</Table.ColumnHeader>
+              <Table.ColumnHeader>SerialCode</Table.ColumnHeader>
               <Table.ColumnHeader>ScanTime</Table.ColumnHeader>
               <Table.ColumnHeader>Result</Table.ColumnHeader>
-              <Table.ColumnHeader>UserID</Table.ColumnHeader>
+              <Table.ColumnHeader>Username</Table.ColumnHeader>
+              <Table.ColumnHeader>CurrentStation</Table.ColumnHeader>
+              <Table.ColumnHeader>PreviousStation</Table.ColumnHeader>
             </Table.Row>
           </Table.Header>
           <Table.Body>
@@ -139,16 +141,20 @@ export default function App() {
               scan.LogID != "" ?
               <Table.Row key={scan.LogID}>
                 <Table.Cell>{scan.LogID}</Table.Cell>
-                <Table.Cell>{scan.SerialID}</Table.Cell>
+                <Table.Cell>{scan.SerialCode}</Table.Cell>
                 <Table.Cell>{new Date(scan.ScanTime).toLocaleString()}</Table.Cell>
                 <Table.Cell>{scan.Result}</Table.Cell>
-                <Table.Cell>{scan.UserID}</Table.Cell>
+                <Table.Cell>{scan.Username}</Table.Cell>
+                <Table.Cell>{scan.CurrentStation}</Table.Cell>
+                <Table.Cell>{scan.PreviousStation}</Table.Cell>
               </Table.Row>
               :
               <Table.Row key="pending" animation="slide-from-top 1s">
                 <Table.Cell></Table.Cell>
                 <Table.Cell><Spinner size="xs" /></Table.Cell>
                 <Table.Cell>Loading...</Table.Cell>
+                <Table.Cell></Table.Cell>
+                <Table.Cell></Table.Cell>
                 <Table.Cell></Table.Cell>
                 <Table.Cell></Table.Cell>
               </Table.Row>

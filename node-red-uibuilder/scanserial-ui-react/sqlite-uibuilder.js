@@ -36,11 +36,10 @@ import { refresh, scan, debugQueries } from "./sqlite-uibuilder-modules/queries"
                         }
                     });
 
-
                     return;
                 }
 
-                const data =  scan(msg, db);
+                const data = scan(msg, db);
 
                 emit("msg", {
                     payload: {

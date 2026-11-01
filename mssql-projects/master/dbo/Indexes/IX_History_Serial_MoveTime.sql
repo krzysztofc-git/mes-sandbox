@@ -1,0 +1,1 @@
+CREATE INDEX IX_History_Serial_MoveTime ON dbo.SerialStationHistory (SerialID, MoveTime DESC, HistoryID DESC);

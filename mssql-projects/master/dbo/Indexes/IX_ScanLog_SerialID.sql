@@ -1,0 +1,1 @@
+CREATE INDEX IX_ScanLog_SerialID ON dbo.ScanLog (SerialID);

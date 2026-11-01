@@ -1,0 +1,1 @@
+CREATE INDEX IX_ScanLog_ScanTime ON dbo.ScanLog (ScanTime DESC);

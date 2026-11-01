@@ -155,7 +155,7 @@
       {
         "name": "dictionary",
         "type": "json",
-        "value": "{\"en\":{\"type error\":\"Node-RED database setup is incorrect.\",\"connection error\":\"Cannot connect to the database.\",\"request error\":\"Database is missing schema.\",\"scan serial result ok\":\"Serial accepted.\",\"scan serial result scrapped\":\"Serial is scrapped!\",\"scan serial result not found\":\"Serial not found!\",\"scan serial result unknown error\":\"Unable to process serial!\"}}",
+        "value": "{\"en\":{\"type error\":\"Node-RED database setup is incorrect.\",\"connection error\":\"Cannot connect to the database.\",\"request error\":\"Database is missing schema.\",\"scan serial result ok\":\"Serial is OK.\",\"scan serial result scrapped\":\"Serial is scrapped!\",\"scan serial result not found\":\"Serial not found!\",\"scan serial result wrong station\":\"The station sequence is not allowed!\",\"scan serial result moved\":\"Station updated successfully.\",\"scan serial result unknown error\":\"Unable to process serial!\"}}",
         "ui": {
           "type": "input",
           "opts": {
@@ -246,7 +246,7 @@
     "outField": "payload.latestScans",
     "returnType": 0,
     "throwErrors": "0",
-    "query": "SELECT TOP (1000) [LogID]\r\n      ,[SerialID]\r\n      ,[ScanTime]\r\n      ,[Result]\r\n      ,[UserID]\r\n  FROM [master].[dbo].[ScanLog]\r\n  WHERE ScanTime >= DATEADD(MINUTE, -10, GETDATE())\r\n  ORDER BY LogID DESC;",
+    "query": "WITH RankedScans AS (\r\n    SELECT\r\n        SL.LogID,\r\n        S.SerialCode,\r\n        SL.ScanTime,\r\n        SL.Result,\r\n        U.Username,\r\n        CurrentStation.StationName AS CurrentStation,\r\n        PreviousStation.StationName AS PreviousStation,\r\n        ROW_NUMBER() OVER (\r\n            PARTITION BY S.SerialCode\r\n            ORDER BY SL.LogID DESC\r\n        ) AS RowNum\r\n    FROM ScanLog AS SL\r\n    LEFT JOIN Serials AS S\r\n        ON S.SerialID = SL.SerialID\r\n    LEFT JOIN Users AS U\r\n        ON U.UserID = SL.UserID\r\n    LEFT JOIN Stations AS CurrentStation\r\n        ON CurrentStation.StationID = S.CurrentStationID\r\n    LEFT JOIN SerialStationHistory AS H\r\n        ON H.HistoryID = (\r\n            SELECT TOP (1) H2.HistoryID\r\n            FROM SerialStationHistory AS H2\r\n            WHERE H2.SerialID = SL.SerialID\r\n            ORDER BY\r\n                H2.MoveTime DESC,\r\n                H2.HistoryID DESC\r\n        )\r\n    LEFT JOIN Stations AS PreviousStation\r\n        ON PreviousStation.StationID = H.FromStationID\r\n    WHERE SL.ScanTime >= DATEADD(MINUTE, -10, GETDATE())\r\n)\r\nSELECT\r\n    LogID,\r\n    SerialCode,\r\n    ScanTime,\r\n    Result,\r\n    Username,\r\n    CurrentStation,\r\n    PreviousStation\r\nFROM RankedScans\r\nWHERE RowNum = 1\r\nORDER BY LogID DESC",
     "modeOpt": "queryMode",
     "modeOptType": "query",
     "queryOpt": "payload",
@@ -452,7 +452,7 @@
     "title": "",
     "descr": "",
     "editurl": "",
-    "x": 260,
+    "x": 340,
     "y": 60,
     "wires": [
       [
@@ -903,7 +903,7 @@
     "type": "function",
     "z": "25",
     "name": "prepare result",
-    "func": "if (msg.payload.result.result === \"OK\") {\n    msg.payload.result = {\n        ...msg.payload.result,\n        type: \"success\",\n        message_dict_key: \"scan serial result ok\"\n    }\n} else if (msg.payload.result.result === \"SCRAPPED\") {\n    msg.payload.result = {\n        ...msg.payload.result,\n        type: \"warning\",\n        message_dict_key: \"scan serial result scrapped\"\n    }\n} else if (msg.payload.result.result === \"NOT FOUND\") {\n    msg.payload.result = {\n        ...msg.payload.result,\n        type: \"error\",\n        message_dict_key: \"scan serial result not found\"\n    }\n} else {\n    msg.payload.result = {\n        ...msg.payload.result,\n        type: \"error\",\n        message_dict_key: \"scan serial result unknown error\"\n    }\n}\nreturn msg;",
+    "func": "if (msg.payload.result.result === \"OK\") {\n    msg.payload.result = {\n        ...msg.payload.result,\n        type: \"success\",\n        message_dict_key: \"scan serial result ok\"\n    }\n} else if (msg.payload.result.result === \"SCRAPPED\") {\n    msg.payload.result = {\n        ...msg.payload.result,\n        type: \"warning\",\n        message_dict_key: \"scan serial result scrapped\"\n    }\n} else if (msg.payload.result.result === \"NOT FOUND\") {\n    msg.payload.result = {\n        ...msg.payload.result,\n        type: \"error\",\n        message_dict_key: \"scan serial result not found\"\n    }\n} else if (msg.payload.result.result === \"WRONG STATION\") {\n    msg.payload.result = {\n        ...msg.payload.result,\n        type: \"warning\",\n        message_dict_key: \"scan serial result wrong station\"\n    }\n} else if (msg.payload.result.result === \"MOVED\") {\n    msg.payload.result = {\n        ...msg.payload.result,\n        type: \"success\",\n        message_dict_key: \"scan serial result moved\"\n    }\n} else {\n    msg.payload.result = {\n        ...msg.payload.result,\n        type: \"error\",\n        message_dict_key: \"scan serial result unknown error\"\n    }\n}\nreturn msg;",
     "outputs": 1,
     "timeout": 0,
     "noerr": 0,

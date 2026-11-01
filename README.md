@@ -8,31 +8,36 @@ This project provides a containerized development environment that allows to sim
 - Docker (containerized services)
 - SQL Server Data Tools (.sqlproj)
 - JavaScript (Node-RED function nodes)
+- React (Vite, SQLite Wasm)
 
 ## Preview of "scanserial-ui.json" flow in Node-RED
 ScanSerial flows are connected across tabs using Link nodes located at the beginning and the end of each flow.
 
-- "ScanSerial UI" flow
-![ScanSerial UI flow](README_images/scanserial_ui_flow.png)
+<details>
+    <summary>Click here to see the example flows</summary>
 
-- "ScanSerial Action" flow
-![ScanSerial Action flow](README_images/scanserial_action_flow.png)
+  - "ScanSerial UI" flow
+  ![ScanSerial UI flow](README_images/scanserial_ui_flow.png)
 
-- "Global Translations" subflow
-![Global Translations subflow properties](README_images/global_translations_subflow.png)
+  - "ScanSerial Action" flow
+  ![ScanSerial Action flow](README_images/scanserial_action_flow.png)
 
-- "Global Translations" subflow properties
-![Global Translations subflow properties](README_images/global_translations_subflow_properties.png)
+  - "Global Translations" subflow
+  ![Global Translations subflow properties](README_images/global_translations_subflow.png)
 
-- "call ScanSerial procedure" subflow
-![call ScanSerial procedure subflow](README_images/call_scanserial_procedure_subflow.png)
+  - "Global Translations" subflow properties
+  ![Global Translations subflow properties](README_images/global_translations_subflow_properties.png)
 
-- "get Scanlog if no error" subflow
-![get Scanlog if no error subflow](README_images/get_scanlog_if_no_error_subflow.png)
+  - "call ScanSerial procedure" subflow
+  ![call ScanSerial procedure subflow](README_images/call_scanserial_procedure_subflow.png)
+
+  - "get Scanlog if no error" subflow
+  ![get Scanlog if no error subflow](README_images/get_scanlog_if_no_error_subflow.png)
+</details>
 
 ## Quick Start Guide
 
-### Full version (Node-RED and SQL Server)
+### A. Full version (Node-RED and SQL Server)
 1. Run Docker Compose from `.devcontainer/docker-compose.yml`.
 2. Deploy Database from `mssql-projects/master/master.sqlproj`.
 3. Access Node-RED interface from port 1880 and import `node-red-library/flows` in order:
@@ -41,9 +46,42 @@ ScanSerial flows are connected across tabs using Link nodes located at the begin
     3. "scanserial-ui.json" (allows to use web app `node-red-uibuilder/scanserial-ui-react`).
 4. Read [Additional setup](#additional-setup) section below to learn how to access database and more.
 
-### Webpage version (Vite and SQLite Wasm)
+### B. Webpage version (Vite and SQLite Wasm)
 1. Install dependencies using `install_react_mock.sh`.
 2. Run development server using `run_react_mock.sh`.
+
+## Node-RED usage
+
+After completing General setup you can watch "Creating a flow - Node-RED Essentials" by Node-RED (2-minute YouTube video) or check their official documentation.
+
+## ScanSerial UI usage (preloaded records)
+
+### The scanning form instructions
+1. Select the User and the Station where you are working.
+2. Scan the product's [serial code](#serial-codes) using the input form.
+3. The system validates the serial and displays its status.
+4. If this is the first scan at the selected station and the serial passes validation, the system automatically updates its current station (the move must be allowed by [the defined station routes](#allowed-routes-between-stations)). If the serial is already at that station, no movement takes place.
+> [!TIP]
+> The table displays scan results from the last 10 minutes, showing only the latest entry for each serial number.
+
+### Serial codes
+
+| Serial code | Initial station | Status |
+|---|---|---|
+| A01 | Assembly | ACTIVE |
+| A02 | Packaging | SCRAPPED |
+| B01 | Finished | COMPLETED |
+| B02 | Test | HOLD |
+
+### Allowed routes between stations
+
+```mermaid
+flowchart LR
+    A["Assembly"] --> B["Test"]
+    B --> A
+    B --> C["Packaging"]
+    C --> D["Finished"]
+```
 
 ## General setup (using VS Code)
 
@@ -93,12 +131,6 @@ ScanSerial flows are connected across tabs using Link nodes located at the begin
 11. You can now import other projects, click "Deploy" (in upper right corner) and check functionalities.
 > [!IMPORTANT]
 > Imported "uibuilder" nodes have `<no url>` value. Replace them with URL matching imported project name (e.g. for "scanserial-ui.json" project, set URL: `scanserial-ui`). Refer to a specific project structure in folders: "node-red-uibuilder" and "node-red-library".
-
-## Usage
-
-### Node-RED
-
-After completing General setup you can watch "Creating a flow - Node-RED Essentials" by Node-RED (2-minute YouTube video) or check their official documentation.
 
 ## Additional setup
 

@@ -7,6 +7,7 @@ services:
     environment:
       ACCEPT_EULA: "Y"
       MSSQL_SA_PASSWORD: "YourStrong!Password123"
+      MSSQL_PID: "Express"
     ports:
       - "1433:1433"
     healthcheck:

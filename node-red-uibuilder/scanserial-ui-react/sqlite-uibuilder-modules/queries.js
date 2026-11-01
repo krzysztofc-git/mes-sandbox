@@ -29,14 +29,50 @@ export function refresh(db) {
 
     const latestScans = db.exec({
         sql: `
+            WITH RankedScans AS (
+                SELECT
+                    SL.LogID,
+                    S.SerialCode,
+                    SL.ScanTime,
+                    SL.Result,
+                    U.Username,
+                    CurrentStation.StationName AS CurrentStation,
+                    PreviousStation.StationName AS PreviousStation,
+                    ROW_NUMBER() OVER (
+                        PARTITION BY S.SerialCode
+                        ORDER BY SL.LogID DESC
+                    ) AS RowNum
+                FROM ScanLog AS SL
+                LEFT JOIN Serials AS S
+                    ON S.SerialID = SL.SerialID
+                LEFT JOIN Users AS U
+                    ON U.UserID = SL.UserID
+                LEFT JOIN Stations AS CurrentStation
+                    ON CurrentStation.StationID = S.CurrentStationID
+                LEFT JOIN SerialStationHistory AS H
+                    ON H.HistoryID = (
+                        SELECT H2.HistoryID
+                        FROM SerialStationHistory AS H2
+                        WHERE H2.SerialID = SL.SerialID
+                        ORDER BY
+                            H2.MoveTime DESC,
+                            H2.HistoryID DESC
+                        LIMIT 1
+                    )
+                LEFT JOIN Stations AS PreviousStation
+                    ON PreviousStation.StationID = H.FromStationID
+                WHERE SL.ScanTime >= ?
+            )
             SELECT
                 LogID,
-                SerialID,
+                SerialCode,
                 ScanTime,
                 Result,
-                UserID
-            FROM ScanLog
-            WHERE ScanTime >= ?
+                Username,
+                CurrentStation,
+                PreviousStation
+            FROM RankedScans
+            WHERE RowNum = 1
             ORDER BY LogID DESC
         `,
         bind: [tenMinutesAgo],
@@ -56,117 +92,56 @@ export function scan(msg, db) {
 
     const serialCode = payload.serial;
     const userId = Number(payload.userId);
+    const stationId = Number(payload.stationId);
 
     try {
         // Begin transaction
         db.exec("BEGIN TRANSACTION");
 
-        let status = null;
-        let serialId = null;
-        let productName = null;
-
-        // Get serial status and ID
+        // Get serial status, ID, origin station and product name
         const serial = db.exec({
             sql: `
                 SELECT
-                    Status,
-                    SerialID
-                FROM Serials
-                WHERE SerialCode = ?
+                    S.SerialID,
+                    S.Status,
+                    S.CurrentStationID,
+                    P.ProductName
+                FROM Serials AS S
+                LEFT JOIN Products AS P
+                    ON P.ProductID = S.ProductID
+                WHERE S.SerialCode = ?
             `,
             bind: [serialCode],
             rowMode: "object",
             returnValue: "resultRows"
         })[0];
 
-        if (serial) {
-            status = serial.Status;
-            serialId = serial.SerialID;
-        }
-
-        // Get product name
-        if (serialId !== null) {
-            const product = db.exec({
-                sql: `
-                    SELECT
-                        P.ProductName
-                    FROM Products AS P
-                    INNER JOIN Serials AS S
-                        ON P.ProductID = S.ProductID
-                    WHERE S.SerialID = ?
-                `,
-                bind: [serialId],
-                rowMode: "object",
-                returnValue: "resultRows"
-            })[0];
-
-            productName = product?.ProductName ?? null;
-        }
-
-        // T-SQL procedure and hardcoded messages
-        if (status === null) {
-            const result = "NOT FOUND";
-
-            // Scan Log
-            db.exec({
-                sql: `
-                    INSERT INTO ScanLog (
-                        SerialID,
-                        ScanTime,
-                        Result,
-                        UserID
-                    )
-                    VALUES (?, ?, ?, ?)
-                `,
-                bind: [
-                    serialId,
-                    new Date().toISOString(),
-                    result,
-                    userId
-                ]
-            });
-
-            // Rollback transaction
+        // Serial not found
+        if (!serial) {
             db.exec("ROLLBACK");
 
             return {
                 result: {
-                    message: "Serial was not found.",
+                    message: "Serial not found!",
                     type: "error",
-                    productName
+                    productName: null
                 },
                 ...refresh(db)
             };
         }
 
+        const serialId = serial.SerialID;
+        const status = serial.Status;
+        const originStationId = serial.CurrentStationID;
+        const productName = serial.ProductName ?? null;
+
+        // Reject scrapped serials
         if (status === "SCRAPPED") {
-            const result = "SCRAPPED";
-
-            // Scan Log
-            db.exec({
-                sql: `
-                    INSERT INTO ScanLog (
-                        SerialID,
-                        ScanTime,
-                        Result,
-                        UserID
-                    )
-                    VALUES (?, ?, ?, ?)
-                `,
-                bind: [
-                    serialId,
-                    new Date().toISOString(),
-                    result,
-                    userId
-                ]
-            });
-
-            // Rollback transaction
             db.exec("ROLLBACK");
 
             return {
                 result: {
-                    message: "Serial has scrapped status.",
+                    message: "Serial is scrapped!",
                     type: "warning",
                     productName
                 },
@@ -174,9 +149,126 @@ export function scan(msg, db) {
             };
         }
 
-        const result = "OK";
+        // Check if the serial is already at the destination
+        if (originStationId === stationId) {
+            // Log the successful validation scan
+            db.exec({
+                sql: `
+                    INSERT INTO ScanLog (
+                        SerialID,
+                        ScanTime,
+                        Result,
+                        UserID
+                    )
+                    VALUES (?, ?, ?, ?)
+                `,
+                bind: [
+                    serialId,
+                    new Date().toISOString(),
+                    "OK",
+                    userId
+                ]
+            });
 
-        // Scan Log
+            // Commit transaction
+            db.exec("COMMIT");
+
+            return {
+                result: {
+                    message: "Serial is OK.",
+                    type: "success",
+                    productName
+                },
+                ...refresh(db)
+            };
+        }
+
+        // Check if the route between stations is allowed
+        const route = db.exec({
+            sql: `
+                SELECT
+                    StationAllowedRouteID
+                FROM StationAllowedRoutes
+                WHERE FromStationID = ?
+                  AND ToStationID = ?
+            `,
+            bind: [
+                originStationId,
+                stationId
+            ],
+            rowMode: "object",
+            returnValue: "resultRows"
+        })[0];
+
+        // Reject an invalid station sequence
+        if (!route) {
+            // Log the rejected scan
+            db.exec({
+                sql: `
+                    INSERT INTO ScanLog (
+                        SerialID,
+                        ScanTime,
+                        Result,
+                        UserID
+                    )
+                    VALUES (?, ?, ?, ?)
+                `,
+                bind: [
+                    serialId,
+                    new Date().toISOString(),
+                    "WRONG STATION",
+                    userId
+                ]
+            });
+
+            // Rollback transaction and the ScanLog insert
+            db.exec("ROLLBACK");
+
+            return {
+                result: {
+                    message: "The station sequence is not allowed!",
+                    type: "warning",
+                    productName
+                },
+                ...refresh(db)
+            };
+        }
+
+        // Update the serial's current station
+        db.exec({
+            sql: `
+                UPDATE Serials
+                SET CurrentStationID = ?
+                WHERE SerialID = ?
+            `,
+            bind: [
+                stationId,
+                serialId
+            ]
+        });
+
+        // Record the station movement
+        db.exec({
+            sql: `
+                INSERT INTO SerialStationHistory (
+                    SerialID,
+                    FromStationID,
+                    ToStationID,
+                    MoveTime,
+                    UserID
+                )
+                VALUES (?, ?, ?, ?, ?)
+            `,
+            bind: [
+                serialId,
+                originStationId,
+                stationId,
+                new Date().toISOString(),
+                userId
+            ]
+        });
+
+        // Record the successful scan
         db.exec({
             sql: `
                 INSERT INTO ScanLog (
@@ -190,7 +282,7 @@ export function scan(msg, db) {
             bind: [
                 serialId,
                 new Date().toISOString(),
-                result,
+                "OK",
                 userId
             ]
         });
@@ -201,7 +293,7 @@ export function scan(msg, db) {
         // Combine results
         return {
             result: {
-                message: "Serial is OK.",
+                message: "Station updated successfully.",
                 type: "success",
                 productName
             },
@@ -245,6 +337,26 @@ export const debugQueries = {
         SELECT *
         FROM ScanLog
         ORDER BY LogID DESC
+    `,
+
+    allMovementHistory: `
+        SELECT
+            H.HistoryID,
+            S.SerialCode,
+            FromStation.StationName AS FromStation,
+            ToStation.StationName AS ToStation,
+            H.MoveTime,
+            U.Username
+        FROM SerialStationHistory AS H
+        JOIN Serials AS S
+            ON S.SerialID = H.SerialID
+        LEFT JOIN Stations AS FromStation
+            ON FromStation.StationID = H.FromStationID
+        JOIN Stations AS ToStation
+            ON ToStation.StationID = H.ToStationID
+        JOIN Users AS U
+            ON U.UserID = H.UserID
+        ORDER BY H.HistoryID DESC;
     `,
 
     joinSelect: `

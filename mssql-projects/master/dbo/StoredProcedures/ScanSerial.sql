@@ -11,6 +11,7 @@ AS
 
       DECLARE @Status VARCHAR(20);
       DECLARE @SerialID INT;
+      DECLARE @CurrentStationID INT;
 
       SELECT @Status = Status
       FROM Serials
@@ -29,24 +30,48 @@ AS
       IF @Status IS NULL
       BEGIN
         SET @Result = 'NOT FOUND';
-        INSERT INTO ScanLog (SerialID, Result, UserID)
-        VALUES (@SerialID, @Result, @UserID);
-
         ROLLBACK;
         RETURN;
       END
+
+      SELECT @CurrentStationID = CurrentStationID
+      FROM Serials
+      WHERE SerialID = @SerialID;
 
       IF @Status = 'SCRAPPED'
       BEGIN
         SET @Result = 'SCRAPPED';
-        INSERT INTO ScanLog (SerialID, Result, UserID)
-        VALUES (@SerialID, @Result, @UserID);
-
         ROLLBACK;
         RETURN;
       END
 
-      SET @Result = 'OK';
+      IF @CurrentStationID <> @StationID
+      BEGIN
+        IF NOT EXISTS (
+          SELECT 1
+          FROM StationAllowedRoutes
+          WHERE FromStationID = @CurrentStationID
+          AND ToStationID = @StationID
+        )
+        BEGIN
+          SET @Result = 'WRONG STATION';
+          ROLLBACK;
+          RETURN;
+        END
+
+        UPDATE Serials
+        SET CurrentStationID = @StationID
+        WHERE SerialID = @SerialID;
+
+        INSERT INTO SerialStationHistory
+          (SerialID, FromStationID, ToStationID, MoveTime, UserID)
+        VALUES
+          (@SerialID, @CurrentStationID, @StationID, GETDATE(), @UserID);
+        SET @Result = 'MOVED';
+      END
+
+      IF @CurrentStationID = @StationID
+        SET @Result = 'OK';
       INSERT INTO ScanLog (SerialID, Result, UserID)
       VALUES (@SerialID, @Result, @UserID);
 

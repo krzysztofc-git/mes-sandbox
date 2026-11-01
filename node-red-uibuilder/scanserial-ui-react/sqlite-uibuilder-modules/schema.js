@@ -45,6 +45,51 @@ export function createDatabase(db) {
                 REFERENCES Users(UserID)
         );
 
+        CREATE TABLE SerialStationHistory (
+            HistoryID INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+            SerialID INTEGER NOT NULL,
+            FromStationID INTEGER,
+            ToStationID INTEGER NOT NULL,
+            MoveTime TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            UserID INTEGER NOT NULL,
+
+            CONSTRAINT FK_History_Serials
+                FOREIGN KEY (SerialID)
+                REFERENCES Serials(SerialID),
+
+            CONSTRAINT FK_History_FromStation
+                FOREIGN KEY (FromStationID)
+                REFERENCES Stations(StationID),
+
+            CONSTRAINT FK_History_ToStation
+                FOREIGN KEY (ToStationID)
+                REFERENCES Stations(StationID),
+
+            CONSTRAINT FK_History_Users
+                FOREIGN KEY (UserID)
+                REFERENCES Users(UserID)
+        );
+
+        CREATE TABLE StationAllowedRoutes (
+            StationAllowedRouteID INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+            FromStationID INTEGER NOT NULL,
+            ToStationID INTEGER NOT NULL,
+
+            CONSTRAINT UQ_StationAllowedRoutes
+                UNIQUE (FromStationID, ToStationID),
+
+            CONSTRAINT FK_StationAllowedRoutes_FromStation
+                FOREIGN KEY (FromStationID)
+                REFERENCES Stations(StationID),
+
+            CONSTRAINT FK_StationAllowedRoutes_ToStation
+                FOREIGN KEY (ToStationID)
+                REFERENCES Stations(StationID),
+
+            CONSTRAINT CK_StationAllowedRoutes_DifferentStations
+                CHECK (FromStationID <> ToStationID)
+        );
+
         INSERT INTO Products (
             ProductCode,
             ProductID,
@@ -100,6 +145,16 @@ export function createDatabase(db) {
             (1, 1, '2020-01-01 12:00:00.000', 'OK', 1),
             (2, 2, '2020-01-01 12:00:00.000', 'SCRAPPED', 1),
             (3, 3, '2020-01-01 12:00:00.000', 'NOT FOUND', 1);
+
+        INSERT INTO StationAllowedRoutes (
+            FromStationID,
+            ToStationID
+        )
+        VALUES
+            (1, 2),
+            (2, 3),
+            (2, 1),
+            (3, 4);
 
         CREATE INDEX idx_ScanLog_ScanTime
             ON ScanLog(ScanTime);
